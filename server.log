@@ -1,0 +1,10 @@
+
+> temp-app@0.1.0 start
+> next start
+
+   ▲ Next.js 15.0.3
+   - Local:        http://localhost:3001
+
+ ✓ Starting...
+ ✓ Ready in 566ms
+Supabase credentials are missing. Please check your .env.local file.

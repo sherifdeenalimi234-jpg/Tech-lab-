@@ -4,11 +4,13 @@ import React, { useRef, useState } from 'react';
 import { toPng } from 'html-to-image';
 import { FlyerTemplate } from './FlyerTemplate';
 import { Button } from '@/components/ui/Button';
-import { Download, Share2, ArrowLeft } from 'lucide-react';
+import { Download, Share2, ArrowLeft, Save, Check } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { saveFlyer } from '@/lib/actions';
 
 interface FlyerDownloaderProps {
   registration: {
+    id: string;
     full_name: string;
     role: string;
     photo_url: string;
@@ -19,25 +21,37 @@ interface FlyerDownloaderProps {
 export const FlyerDownloader = ({ registration, onReset }: FlyerDownloaderProps) => {
   const flyerRef = useRef<HTMLDivElement>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+
+  const generateFile = async (quality = 1): Promise<File> => {
+    if (!flyerRef.current) throw new Error('Flyer ref not found');
+
+    // Ensure images are loaded
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    const dataUrl = await toPng(flyerRef.current, {
+      quality: quality,
+      pixelRatio: 2,
+      cacheBust: true,
+    });
+
+    const blob = await (await fetch(dataUrl)).blob();
+    return new File([blob], `Nova-Tech-Lab-Flyer-${registration.full_name.replace(/\s+/g, '-')}.png`, { type: 'image/png' });
+  };
 
   const handleDownload = async () => {
     if (!flyerRef.current) return;
 
     setIsGenerating(true);
     try {
-      // Small delay to ensure images are loaded
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      const dataUrl = await toPng(flyerRef.current, {
-        quality: 1,
-        pixelRatio: 2,
-        cacheBust: true,
-      });
-
+      const file = await generateFile();
+      const url = URL.createObjectURL(file);
       const link = document.createElement('a');
-      link.download = `Nova-Tech-Lab-Flyer-${registration.full_name.replace(/\s+/g, '-')}.png`;
-      link.href = dataUrl;
+      link.download = file.name;
+      link.href = url;
       link.click();
+      URL.revokeObjectURL(url);
 
       confetti({
         particleCount: 150,
@@ -53,14 +67,24 @@ export const FlyerDownloader = ({ registration, onReset }: FlyerDownloaderProps)
     }
   };
 
-  const handleShare = async () => {
-    if (!flyerRef.current) return;
-
+  const handleSaveToProfile = async () => {
+    setIsSaving(true);
     try {
-      const dataUrl = await toPng(flyerRef.current, { quality: 0.8 });
-      const blob = await (await fetch(dataUrl)).blob();
-      const file = new File([blob], 'flyer.png', { type: 'image/png' });
+      const file = await generateFile(0.8);
+      await saveFlyer(registration.id, file);
+      setIsSaved(true);
+      alert('Flyer saved to your profile successfully!');
+    } catch (err) {
+      console.error('Failed to save flyer', err);
+      alert('Failed to save flyer to profile.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
+  const handleShare = async () => {
+    try {
+      const file = await generateFile(0.7);
       if (navigator.share) {
         await navigator.share({
           title: 'My Nova Tech Lab Launch Flyer',
@@ -92,16 +116,26 @@ export const FlyerDownloader = ({ registration, onReset }: FlyerDownloaderProps)
          </div>
       </div>
 
-      <div className="flex flex-wrap justify-center gap-4 mt-12 w-full max-w-md">
-        <Button onClick={handleDownload} isLoading={isGenerating} className="flex-1 min-w-[160px]">
+      <div className="flex flex-wrap justify-center gap-4 mt-12 w-full max-w-lg">
+        <Button onClick={handleDownload} isLoading={isGenerating} className="flex-1 min-w-[140px]">
           <Download className="w-4 h-4 mr-2" />
-          Download PNG
+          Download
         </Button>
-        <Button variant="outline" onClick={handleShare} className="flex-1 min-w-[160px]">
+        <Button
+          variant={isSaved ? "outline" : "primary"}
+          onClick={handleSaveToProfile}
+          isLoading={isSaving}
+          disabled={isSaved}
+          className="flex-1 min-w-[140px]"
+        >
+          {isSaved ? <Check className="w-4 h-4 mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+          {isSaved ? 'Saved' : 'Save to Profile'}
+        </Button>
+        <Button variant="outline" onClick={handleShare} className="flex-1 min-w-[140px]">
           <Share2 className="w-4 h-4 mr-2" />
-          Share Flyer
+          Share
         </Button>
-        <Button variant="ghost" onClick={onReset} className="w-full mt-4">
+        <Button variant="ghost" onClick={onReset} className="w-full mt-2">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Register Another Person
         </Button>

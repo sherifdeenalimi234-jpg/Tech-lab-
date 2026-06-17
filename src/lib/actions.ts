@@ -41,15 +41,31 @@ export async function registerUser(userData: {
   return data;
 }
 
-export async function getRegistrations() {
-  const { data, error } = await supabase
-    .from('registrations')
-    .select('*')
-    .order('created_at', { ascending: false });
+export async function saveFlyer(registrationId: string, flyerFile: File): Promise<string> {
+  const fileName = `flyers/${registrationId}.png`;
 
-  if (error) {
-    throw new Error(`Failed to fetch registrations: ${error.message}`);
+  const { error: uploadError } = await supabase.storage
+    .from('registrations')
+    .upload(fileName, flyerFile, {
+      upsert: true
+    });
+
+  if (uploadError) {
+    throw new Error(`Flyer upload failed: ${uploadError.message}`);
   }
 
-  return data;
+  const { data: { publicUrl } } = supabase.storage
+    .from('registrations')
+    .getPublicUrl(fileName);
+
+  const { error: updateError } = await supabase
+    .from('registrations')
+    .update({ flyer_url: publicUrl })
+    .eq('id', registrationId);
+
+  if (updateError) {
+    throw new Error(`Database update failed: ${updateError.message}`);
+  }
+
+  return publicUrl;
 }

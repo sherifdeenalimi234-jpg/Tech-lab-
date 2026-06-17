@@ -30,7 +30,13 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 interface RegistrationFormProps {
-  onSuccess: (data: FormData) => Promise<void>;
+  onSuccess: (data: {
+    full_name: string;
+    email: string;
+    institution: string;
+    role: "Participant" | "Speaker" | "Panelist" | "Volunteer" | "Guest";
+    photo: FileList;
+  }) => Promise<void>;
 }
 
 export const RegistrationForm = ({ onSuccess }: RegistrationFormProps) => {
@@ -65,7 +71,13 @@ export const RegistrationForm = ({ onSuccess }: RegistrationFormProps) => {
     try {
       // Logic for upload will be handled by the parent or an action
       // For now, we pass the data up
-      await onSuccess(data);
+      await onSuccess(data as {
+        full_name: string;
+        email: string;
+        institution: string;
+        role: "Participant" | "Speaker" | "Panelist" | "Volunteer" | "Guest";
+        photo: FileList;
+      });
     } catch (error) {
       console.error('Submission failed', error);
       alert('Registration failed. Please try again.');

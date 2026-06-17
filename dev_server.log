@@ -1,0 +1,29 @@
+
+> temp-app@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.0.3
+   - Local:        http://localhost:3000
+
+ ✓ Starting...
+ ✓ Ready in 1837ms
+ ○ Compiling / ...
+ ⨯ Failed to find font override values for font `Geist`
+ ⨯ Failed to find font override values for font `Geist Mono`
+ ⨯ Failed to find font override values for font `Geist`
+ ⨯ Failed to find font override values for font `Geist Mono`
+ ✓ Compiled / in 8.1s (1527 modules)
+Supabase credentials are missing. Please check your .env.local file.
+ HEAD / 200 in 9032ms
+ GET / 200 in 119ms
+ ✓ Compiled in 984ms (744 modules)
+ ✓ Compiled in 519ms (744 modules)
+ ✓ Compiled in 202ms (744 modules)
+ ✓ Compiled in 185ms (744 modules)
+ ✓ Compiled in 1484ms (1509 modules)
+ ✓ Compiled in 478ms (1513 modules)
+ ✓ Compiled in 438ms (1513 modules)
+ ✓ Compiled in 175ms (746 modules)
+ ✓ Compiled in 410ms (1515 modules)
+ ✓ Compiled in 240ms (747 modules)
+ ✓ Compiled in 659ms (747 modules)

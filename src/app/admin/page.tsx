@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { getRegistrations } from '@/lib/actions';
+import { getRegistrations } from './actions';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { GlassCard } from '@/components/ui/Card';
-import { Search, Download, Users, Calendar, TrendingUp, LogOut } from 'lucide-react';
+import { Search, Download, Users, Calendar, TrendingUp, LogOut, Loader2 } from 'lucide-react';
 import type { Registration } from '@/types';
 
 export default function AdminDashboard() {
@@ -14,28 +14,24 @@ export default function AdminDashboard() {
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === process.env.NEXT_PUBLIC_ADMIN_PASSWORD || password === 'admin123') {
-      setIsAuthenticated(true);
-      fetchData();
-    } else {
-      alert('Invalid password');
-    }
-  };
-
-  const fetchData = async () => {
     setIsLoading(true);
+    setError(null);
     try {
-      const data = await getRegistrations();
-      setRegistrations(data);
-    } catch (error) {
-      console.error(error);
+      const data = await getRegistrations(password);
+      setRegistrations(data as Registration[]);
+      setIsAuthenticated(true);
+    } catch (err) {
+      setError('Invalid password or unauthorized access');
+      console.error(err);
     } finally {
       setIsLoading(false);
     }
   };
+
 
   const exportCSV = () => {
     const headers = ['Full Name', 'Email', 'Institution', 'Role', 'Date Registered'];
@@ -76,8 +72,12 @@ export default function AdminDashboard() {
               placeholder="Enter Admin Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              disabled={isLoading}
             />
-            <Button type="submit" className="w-full">Unlock Dashboard</Button>
+            {error && <p className="text-red-500 text-xs text-left">{error}</p>}
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Unlock Dashboard'}
+            </Button>
           </form>
         </GlassCard>
       </div>

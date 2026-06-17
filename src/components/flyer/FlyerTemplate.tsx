@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { QRCodeSVG } from 'qrcode.react';
+import { IFILogo, NovaLogo } from '../Logos';
 
 interface FlyerTemplateProps {
   registration: {
@@ -30,12 +31,16 @@ export const FlyerTemplate = React.forwardRef<HTMLDivElement, FlyerTemplateProps
         <div className="relative z-10 h-full flex flex-col p-12 border-[16px] border-white/5">
           {/* Header */}
           <div className="flex justify-between items-start mb-8">
-            <div className="space-y-1">
-              <p className="text-brand-gold font-bold text-sm tracking-[0.2em] uppercase">Institute of Future Intelligence</p>
-              <p className="text-white/60 text-xs font-medium uppercase tracking-widest">Nova Community Presents</p>
+            <div className="flex items-center gap-4">
+              <IFILogo className="w-12 h-12 text-brand-gold" />
+              <div className="space-y-0.5">
+                <p className="text-brand-gold font-bold text-sm tracking-[0.1em] uppercase leading-tight">Institute of Future <br/> Intelligence</p>
+                <p className="text-white/40 text-[10px] font-medium uppercase tracking-widest">Nova Community</p>
+              </div>
             </div>
-            <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center font-bold text-xl border border-white/20">
-              N
+            <div className="flex items-center gap-2">
+               <span className="text-[10px] font-bold tracking-tighter text-white/30 uppercase vertical-text">Official Flyer</span>
+               <NovaLogo className="w-12 h-12 text-brand-blue" />
             </div>
           </div>
 
@@ -58,6 +63,7 @@ export const FlyerTemplate = React.forwardRef<HTMLDivElement, FlyerTemplateProps
                      src={registration.photo_url}
                      alt={registration.full_name}
                      className="w-full h-full object-cover"
+                     crossOrigin="anonymous"
                    />
                 </div>
                 <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-brand-blue px-6 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg border border-white/20">
@@ -73,25 +79,30 @@ export const FlyerTemplate = React.forwardRef<HTMLDivElement, FlyerTemplateProps
           <div className="mt-auto pt-8 border-t border-white/10 flex justify-between items-end">
             <div className="space-y-4">
               <div className="flex gap-8">
-                 <div>
+                 <div className="bg-white/5 p-3 rounded-xl border border-white/10">
                    <p className="text-[10px] uppercase tracking-widest text-white/40 mb-1">Date</p>
-                   <p className="text-sm font-bold">FRIDAY</p>
+                   <p className="text-sm font-black text-brand-gold">FRIDAY</p>
                  </div>
-                 <div>
+                 <div className="bg-white/5 p-3 rounded-xl border border-white/10">
                    <p className="text-[10px] uppercase tracking-widest text-white/40 mb-1">Time</p>
-                   <p className="text-sm font-bold">8:00 PM (WAT)</p>
+                   <p className="text-sm font-black text-brand-blue">8:00 PM (WAT)</p>
                  </div>
               </div>
-              <p className="text-[10px] text-white/30 max-w-[200px]">
-                This is an official invitation to the Nova Tech Lab Launch Event.
-              </p>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-brand-gold/20 flex items-center justify-center">
+                  <NovaLogo className="w-5 h-5 text-brand-gold" />
+                </div>
+                <p className="text-[9px] text-white/40 leading-tight max-w-[180px]">
+                  Official attendee of the Nova Tech Lab Launch. Join the future of innovation.
+                </p>
+              </div>
             </div>
 
             <div className="flex flex-col items-center gap-2">
-               <div className="p-2 bg-white rounded-lg">
-                 <QRCodeSVG value="https://novatechlab.com" size={60} />
+               <div className="p-2 bg-white rounded-xl shadow-lg shadow-brand-blue/20">
+                 <QRCodeSVG value="https://novatechlab.vercel.app" size={64} />
                </div>
-               <p className="text-[8px] uppercase tracking-tighter text-white/40">Scan for info</p>
+               <p className="text-[8px] font-bold uppercase tracking-[0.2em] text-white/40">Verify Invite</p>
             </div>
           </div>
         </div>

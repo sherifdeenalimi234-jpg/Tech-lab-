@@ -25,31 +25,24 @@ A modern, production-ready web application for the Nova Tech Lab Launch Event, b
 - Supabase Account
 
 ### 2. Database Setup
-Run the following SQL in your Supabase SQL Editor to create the `registrations` table:
+Run the `supabase/schema.sql` in your Supabase SQL Editor to create the `registrations` table and secure it with Row Level Security (RLS).
 
-```sql
-create table registrations (
-  id uuid default gen_random_uuid() primary key,
-  full_name text not null,
-  email text not null,
-  institution text not null,
-  role text not null,
-  photo_url text not null,
-  flyer_url text,
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null
-);
-
--- Enable RLS
-alter table registrations enable row level security;
-
--- Policies
-create policy "Allow public insertions" on registrations for insert with check (true);
-create policy "Allow public read access" on registrations for select using (true);
-```
+Note: Public read access is disabled by default to protect PII. The Admin dashboard uses the `SUPABASE_SERVICE_ROLE_KEY` via Server Actions.
 
 ### 3. Storage Setup
 1. Create a **public** bucket named `registrations` in Supabase Storage.
-2. Set up policies to allow public uploads and reads.
+2. Allow public inserts and selects in the bucket policies.
+3. **CRITICAL:** To enable flyer generation, you must configure **CORS** on your Supabase bucket. Go to Storage -> Settings -> API -> CORS and add:
+   ```json
+   [
+     {
+       "allowedOrigins": ["*"],
+       "allowedMethods": ["GET"],
+       "allowedHeaders": ["*"],
+       "maxAgeSeconds": 3600
+     }
+   ]
+   ```
 
 ### 4. Environment Variables
 Create a `.env.local` file in the root directory:
@@ -57,7 +50,8 @@ Create a `.env.local` file in the root directory:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-NEXT_PUBLIC_ADMIN_PASSWORD=admin123
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+ADMIN_PASSWORD=secure_admin_password_here
 ```
 
 ### 5. Installation
@@ -69,7 +63,7 @@ npm run dev
 ## Admin Access
 
 - **URL**: `/admin`
-- **Default Password**: `admin123` (Can be changed via `NEXT_PUBLIC_ADMIN_PASSWORD` env variable)
+- **Authentication**: Uses the `ADMIN_PASSWORD` environment variable.
 
 ## Deployment
 

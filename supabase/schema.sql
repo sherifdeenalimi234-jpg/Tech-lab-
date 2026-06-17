@@ -18,11 +18,9 @@ CREATE POLICY "Allow public insert" ON registrations
     FOR INSERT WITH CHECK (true);
 
 -- Policy to allow public read (optional, for admin or public count)
--- For the landing page, we might want to keep it restricted,
--- but for the admin dashboard we'll need access.
--- Usually admin dashboard uses service role or authenticated role.
-CREATE POLICY "Allow public read" ON registrations
-    FOR SELECT USING (true);
+-- Disable public read to protect PII.
+-- Admin dashboard now uses service role via Server Actions for data retrieval.
+-- CREATE POLICY "Allow public read" ON registrations FOR SELECT USING (true);
 
 -- Storage bucket setup (this needs to be done in Supabase UI or via API)
 -- Bucket name: 'profile-photos'

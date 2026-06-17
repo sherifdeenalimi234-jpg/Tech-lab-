@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
@@ -19,8 +19,8 @@
     "lucide-react": "^0.460.0",
     "next": "15.0.3",
     "qrcode.react": "^4.1.0",
-    "react": "19.0.0-rc-66854b9a-20241106",
-    "react-dom": "19.0.0-rc-66854b9a-20241106",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "react-hook-form": "^7.53.2",
     "tailwind-merge": "^2.5.4",
     "zod": "^3.23.8"
